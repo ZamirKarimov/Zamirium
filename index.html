@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Title</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas width="600" height="600"></canvas>
+<script src="https://unpkg.com/chs-js-lib@latest/dist/chs.iife.js" type="text/javascript"></script>
+<script type="text/javascript">
+    const HEIGHT = getHeight();
+const WIDTH = getWidth();
+const COLUMN = getWidth() / 6;
+const FOV = Math.PI / 3;
+const PLAYER_SPEED = 0.1;
+const NUM_RAYS = 120;
+const MAX_DEPTH = 10;
+const FPS = 20; //Works in opposite, as closer to 0, higher the FPS
+let playerX = 5;
+let playerY = 5;
+let playerPOV = 0;
+let mouseX;
+let mouseY;
+
+let map = [
+    [1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,0,0,0,1],
+    [1,0,0,0,1,0,0,0,1],
+    [1,0,0,0,1,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1]
+];
+
+function main(){
+    setSize(WIDTH, HEIGHT);
+    keyDownMethod(control);
+    mouseMoveMethod(mouseControl);
+    setTimer(draw, FPS);
+}
+
+
+function rayCasting(){
+    for(let i = 0; i <= NUM_RAYS; i++){
+        let rayAngle = playerPOV - FOV/2 + FOV * i / NUM_RAYS;
+        let distance = 0;
+        let hit = false;
+
+        let eyeX = Math.cos(rayAngle);
+        let eyeY = Math.sin(rayAngle);
+        
+        while(!hit && distance < MAX_DEPTH) {
+            distance += 0.05;
+
+            let testX = Math.floor(playerX + eyeX * distance);
+            let testY = Math.floor(playerY + eyeY * distance);
+
+            if(testX < 0 || testY < 0) {
+                hit = true;
+                distance = MAX_DEPTH;
+            }
+            else if(map[testY][testX] == 1) {
+                hit = true;
+            }
+        }
+        let wallHeight = HEIGHT / (distance + 0.0001);
+        let lineX = i * (WIDTH / NUM_RAYS);
+        let line = createLine(lineX, HEIGHT/2 - wallHeight/2, lineX, HEIGHT/2 + wallHeight/2, WIDTH / NUM_RAYS, "#816e1e");
+    }
+}
+function draw(){
+    removeAll();
+    rayCasting();
+    moveCamera();
+}
+
+function createLine(x1, x2, y1, y2, width, color){
+    let line = new Line(x1,x2,y1,y2);
+    line.setLineWidth = width;
+    line.setColor(color);
+    add(line);
+    return line;
+}
+function moveCamera(){
+    let x = mouseX;
+    let y = mouseY;
+    if (x > 0 && x < COLUMN){
+        playerPOV -= 0.05;
+    } else if (x > COLUMN && x < COLUMN * 2){
+        playerPOV -= 0.05;
+    } else if (x > COLUMN * 2 && x < COLUMN * 3){
+    } else if (x > COLUMN * 3 && x < COLUMN * 4){
+    } else if (x > COLUMN * 4 && x < COLUMN * 5){
+        playerPOV += 0.05;
+    } else if (x > COLUMN * 5 && x < COLUMN * 6){
+        playerPOV += 0.05;
+    }
+}
+function mouseControl(e){
+    mouseX = e.getX();
+    mouseY = e.getY();
+}
+function control(e){
+    let dx = Math.cos(playerPOV) * PLAYER_SPEED;
+    let dy = Math.sin(playerPOV) * PLAYER_SPEED;
+    console.log(dx + " , " + dy)
+    let wallHit = false;
+    // if()
+    if(e.key == "w"){
+        playerX += dx;
+        playerY += dy;
+    }
+    else if(e.key == "a"){
+        playerY += dy;
+        playerX -= dx;
+    }
+    else if(e.key == "s"){
+        playerX -= dx;
+        playerY -= dy;
+        
+    }
+    else if(e.key == "d"){
+        playerY -= dy;
+        playerX += dx;
+    }
+// console.log(playerX + " , " + playerY)
+}
+main();
+</script>
+<script src="js/script.js"></script>
+</body>
+</html>
