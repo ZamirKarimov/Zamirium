@@ -15,7 +15,7 @@ const WIDTH = getWidth();
 const COLUMN = getWidth() / 6;
 const FOV = Math.PI / 3;
 const PLAYER_SPEED = 0.1;
-const NUM_RAYS = 120;
+const NUM_RAYS = 1200;
 const MAX_DEPTH = 10;
 const FPS = 20; //Works in opposite, as closer to 0, higher the FPS
 let playerX = 5;
@@ -108,9 +108,11 @@ function mouseControl(e){
 function control(e){
     let dx = Math.cos(playerPOV) * PLAYER_SPEED;
     let dy = Math.sin(playerPOV) * PLAYER_SPEED;
-    console.log(dx + " , " + dy)
+    // console.log(dx + " , " + dy)
     let wallHit = false;
-    // if()
+
+
+
     if(e.key == "w"){
         playerX += dx;
         playerY += dy;
@@ -128,7 +130,7 @@ function control(e){
         playerY -= dy;
         playerX += dx;
     }
-// console.log(playerX + " , " + playerY)
+console.log(playerX + " , " + playerY)
 }
 main();
 </script>
